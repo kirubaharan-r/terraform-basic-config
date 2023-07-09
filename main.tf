@@ -1,4 +1,11 @@
 terraform {
+   backend "s3"{
+    bucket = "state-tf-test"
+    region="eu-west-2"
+    key="state-files/main.tfstate"
+    dynamodb_table = "tf-statelock-file"
+   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -33,9 +40,9 @@ resource "aws_internet_gateway" "vpc-test-igw" {
 
 # creates EIP for NAT gateway
 
-resource "aws_eip" "eips" {
+#resource "aws_eip" "eips" {
 
-}
+#}
 
 # Creates Public subnets
 
@@ -60,10 +67,10 @@ resource "aws_subnet" "az3" {
 
 # creates nat gateway
 
-resource "aws_nat_gateway" "vpc-test-nat-gw" {
-  subnet_id     = aws_subnet.az1.id
-  allocation_id = aws_eip.eips.id
-}
+# resource "aws_nat_gateway" "vpc-test-nat-gw" {
+#   subnet_id     = aws_subnet.az1.id
+#   allocation_id = aws_eip.eips.id
+# }
 
 # Creates Private subnets
 
@@ -118,7 +125,7 @@ resource "aws_route_table_association" "vpc-test-az-c" {
 resource "aws_route" "routes-main" {
   route_table_id         = aws_vpc.vpc-test.main_route_table_id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.vpc-test-nat-gw.id
+  gateway_id             = aws_internet_gateway.vpc-test-igw.id
 }
 resource "aws_route_table_association" "vpc-test-az-c-priv" {
   subnet_id      = aws_subnet.az3-priv.id
