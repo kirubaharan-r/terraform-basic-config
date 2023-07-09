@@ -21,6 +21,7 @@ provider "aws" {
     tags = {
       Test   = "test-vpc-&Aurora-&EKS-demo"
       region = "eu-west-1"
+      just="sample"
     }
   }
 }
